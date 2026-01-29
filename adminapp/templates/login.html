@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCOD Admin Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f5f6fa;   /* Soft plain background */
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Login Box */
+    .login-container {
+      background: #ffffff;
+      width: 360px;
+      padding: 35px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-container h2 {
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    /* Input groups */
+    .input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    .input-group input:focus {
+      border-color: #7da7f9;
+      box-shadow: 0 0 5px #7da7f9;
+    }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #f48ca0;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 17px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #6a94e7;
+    }
+
+    /* Extra links */
+    .extra-links {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .extra-links a {
+      text-decoration: none;
+      color: #444;
+      transition: 0.3s;
+    }
+
+    .extra-links a:hover {
+      color: #7da7f9;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-container">
+    <h2>Admin Login</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <div class="extra-links">
+      <p><a href="#">Forgot Password?</a></p>
+    </div>
+  </div>
+
+</body>
+</html>

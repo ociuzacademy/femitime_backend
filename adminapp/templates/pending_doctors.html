@@ -1,0 +1,62 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3 text-center">Pending Doctors</h2>
+
+    <!-- Clinic Doctors -->
+
+
+ 
+    <table class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Qualification</th>
+                <th>Specialization</th>
+                <th>Experience</th>
+                <th>Hospital Address</th>
+                <th>Profile</th>
+                <th>ID Card</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doctor in hospital_pending %}
+            <tr>
+                <td>{{ doctor.name }}</td>
+                <td>{{ doctor.email }}</td>
+                <td>{{ doctor.qualification }}</td>
+                <td>{{ doctor.specialization }}</td>
+                <td>{{ doctor.experience }} years</td>
+                <td>{{ doctor.hospital_address }}</td>
+                <td>
+                    {% if doctor.image %}
+                        <img src="{{ doctor.image.url }}" width="70" height="70" class="rounded border">
+                    {% else %}
+                        <span class="text-muted">No Image</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if doctor.medical_id %}
+                        <a href="{{ doctor.medical_id.url }}" target="_blank">
+                            <img src="{{ doctor.medical_id.url }}" width="70" height="70" class="rounded border">
+                        </a>
+                    {% else %}
+                        <span class="text-muted">No ID</span>
+                    {% endif %}
+                </td>
+                <td><span class="badge bg-warning text-dark">{{ doctor.status }}</span></td>
+                <td>
+                    <a href="{% url 'approve_hospital_doctor' doctor.id %}" class="btn btn-success btn-sm">Approve</a>
+                    <a href="{% url 'reject_hospital_doctor' doctor.id %}" class="btn btn-danger btn-sm">Reject</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="10" class="text-center">No pending hospital doctors</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

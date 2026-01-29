@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PCOD Admin Dashboard</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:#ffffff;;
+      overflow-x: hidden;
+    }
+
+    /* Top Horizontal Navbar */
+    .navbar-custom {
+      background:#f48ca0;;
+      padding: 12px 25px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .navbar-brand {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff !important;
+    }
+
+    .navbar-nav .nav-link {
+      color: #ffffff !important;
+      font-weight: 500;
+      margin-right: 18px;
+      transition: 0.3s;
+    }
+
+    .navbar-nav .nav-link:hover {
+      color: #ffffff !important;
+    }
+
+    .logout-btn {
+      background: #f48ca0;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #f48ca0;;
+    }
+
+    /* Main Content */
+    .content-area {
+      padding: 30px;
+    }
+
+    .dashboard-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .sub-text {
+      color: #555;
+      font-size: 15px;
+      margin-bottom: 25px;
+    }
+
+    /* Cards */
+    .card-box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .card-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-box h3 {
+      color: #f48ca0;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .card-box p {
+      color: #666;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Horizontal Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <a class="navbar-brand" href="{% url 'index' %}"> Admin</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">Dashboard</a>
+        </li>
+
+        <!-- Doctors Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Doctors</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'view_pending_doctors' %}">Pending Doctors</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_approved_doctors' %}">Approved Doctors</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_rejected_doctors' %}">Rejected Doctors</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Books</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'add_book' %}">Add Book</a></li>
+            <li><a class="dropdown-item" href="{% url 'view_books' %}">View Books</a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'view_users' %}">Users</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'view_all_bookings' %}">Bookings</a>
+        </li>
+
+        <li class="nav-item">
+          <button class="logout-btn" onclick="logoutRedirect()">Logout</button>
+
+
+
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <br>
+  <br>
+  {% block content %}
+  
+  <!-- Main Dashboard Content -->
+  <div class="content-area">
+
+    <h2 class="dashboard-title">Welcome to the Femitime Admin Dashboard</h2>
+    <p class="sub-text">
+      Monitor doctors, manage users, review bookings and maintain system health efficiently.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card-box">
+          <h3>Doctors</h3>
+          <p>Manage and verify all registered doctors.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-box">
+          <h3>Users</h3>
+          <p>View user reports and health cycle data.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-box">
+          <h3>Bookings</h3>
+          <p>Track and update consultation appointments.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  {% endblock %}
+
+</body>
+<script>
+  function logoutRedirect() {
+    window.location.href = "{% url 'admin_login' %}";
+  }
+</script>
+
+</html>

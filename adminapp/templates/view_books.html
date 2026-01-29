@@ -1,0 +1,58 @@
+{% extends "index.html" %}
+{% block content %}
+<h2 style="text-align:center; margin-bottom: 20px;"> All Books</h2>
+
+<div style="text-align:center; margin-bottom: 20px;">
+    <a href="{% url 'add_book' %}" 
+       style="padding: 10px 15px; background-color: #f48ca0; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+        Add New Book
+    </a>
+</div>
+
+<table style="width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 16px;">
+    <thead>
+        <tr style="background-color: #f8b6c1; color: white; text-align: center;">
+            <th style="padding: 12px; font-weight: bold;">Title</th>
+            <th style="padding: 12px; font-weight: bold;">Author</th>
+            <th style="padding: 12px; font-weight: bold;">Category</th>
+            <th style="padding: 12px; font-weight: bold;">Publisher</th>
+            <th style="padding: 12px; font-weight: bold;">Publication Date</th>
+            <th style="padding: 12px; font-weight: bold;">Cover</th>
+            <th style="padding: 12px; font-weight: bold;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr style="border-bottom: 1px solid #ddd; text-align: center;">
+            <td style="padding: 10px; font-weight: bold;">{{ book.title }}</td>
+            <td style="padding: 10px;">{{ book.author }}</td>
+            <td style="padding: 10px;">{{ book.category }}</td>
+            <td style="padding: 10px;">{{ book.publisher }}</td>
+            <td style="padding: 10px;">{{ book.publication_date }}</td>
+            <td style="padding: 10px;">
+                {% if book.cover_image %}
+                    <img src="{{ book.cover_image.url }}" width="80" style="border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                {% else %}
+                    <span style="color: #888;">No image</span>
+                {% endif %}
+            </td>
+            <td style="padding: 10px;">
+                <a href="{% url 'edit_book' book.id %}" 
+                   style="padding: 6px 12px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold;">
+                   Edit
+                </a>
+                <a href="{% url 'delete_book' book.id %}" 
+                   onclick="return confirm('Delete this book?')" 
+                   style="padding: 6px 12px; background-color: #f44336; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; margin-left: 5px;">
+                   Delete
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align:center; padding: 15px; color: #888; font-weight: bold;">No books found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

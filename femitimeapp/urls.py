@@ -1,0 +1,67 @@
+# urls.py
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import routers
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from .import views
+# import your viewsets
+from femitimeapp.views import *
+
+# router setup
+router = routers.DefaultRouter()
+router.register(r'register', RegisterViewSet, basename='register')
+router.register(r'hospital_doctors', HospitalDoctorRegisterViewSet,basename='doctor_register')
+router.register(r'hospital_doctor_timeslots', HospitalDoctorTimeSlotGroupViewSet, basename='hospital_doctor_timeslot')
+router.register(r'cycle-inputs', CycleInputViewSet, basename='cycle-input')
+hospital_doctor_profile_update = HospitalDoctorProfileViewSet.as_view({
+    'patch': 'partial_update'
+})
+
+
+# Swagger setup
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Pcod API",
+        default_version='v1',
+        description="API documentation with Swagger & DRF Router",
+        terms_of_service="https://www.example.com/terms/",
+        contact=openapi.Contact(email="support@example.com"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+    path('', include(router.urls)),
+    # Swagger URLs
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+
+
+    path('login/', LoginView.as_view(), name='login'),
+    path("chatbot/", PCODChatbotAPIView.as_view(), name="chatbot_api"),
+    path("predict/", PCODPredictionAPI.as_view(), name="pcod_predict"),
+    path("user/cancel-booking/<int:booking_id>/<int:user_id>/",UserCancelBookingAPI.as_view(),name="user_cancel_booking"),
+    path("doctor/cancel-booking/<int:booking_id>/<int:doctor_id>/",DoctorCancelBookingAPI.as_view(),name="doctor_cancel_booking"),
+    path("doctor/complete-booking/<int:booking_id>/<int:doctor_id>/",DoctorCompleteBookingAPI.as_view(),name="doctor_complete_booking"),
+
+    # path("cycle-inputs/user/<int:user_id>/", get_cycle_inputs_by_user, name="cycle_inputs_by_user"),
+    path('view_hospital_doctor/<int:doctor_id>/', views.view_hospital_doctor_profile, name='view_hospital_doctor_profile'),
+    path('hospital_doctor/update/<int:pk>/', hospital_doctor_profile_update, name='hospital_doctor_profile_update'),
+    path('hospital-doctor/<int:doctor_id>/availability/', views.update_hospital_doctor_availability, name='update_hospital_doctor_availability'),
+    path('hospital/doctor/<int:doctor_id>/timeslots/', view_hospital_doctor_timeslots, name='view_hospital_doctor_timeslots'),
+    path('view_nearby_hospital_doctors/<int:user_id>/', views.view_nearby_hospital_doctors, name='view_nearby_hospital_doctors'),
+    path('user-hospital/doctor/feedback/add/', views.add_hospital_doctor_feedback, name='add_hospital_doctor_feedback'),
+    path('hospital/doctor/<int:doctor_id>/feedback/', views.view_hospital_doctor_feedback, name='view_hospital_doctor_feedback'),
+    path('doctor/<int:doctor_id>/feedback/', GetDoctorFeedbackAPI.as_view(), name='doctor_feedback'),
+    path("user_view_book/", UserViewBook.as_view(), name="user_view_book"),
+    path('hospital/doctor/book-slot/', views.book_hospital_doctor_slot, name='book_hospital_doctor_slot'),
+    path('user/<int:user_id>/hospital/bookings/', views.user_view_booking_hospital.as_view(), name='user_view_hospital_bookings'),
+    path('hospital/doctor/<int:doctor_id>/bookings/', views.doctor_view_booking_hospital.as_view(), name='doctor_view_booking_hospital'),
+    path('cycle-inputs/<int:user_id>/', GetCycleInputsByUser.as_view(), name='user_cycle_inputs'),
+    path('prediction-results/<int:user_id>/', ViewPredictionResultsByUser.as_view(), name='view_prediction_results_by_user'),
+]
