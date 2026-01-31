@@ -800,6 +800,8 @@ class user_view_booking_hospital(APIView):
                 "patient_name": booking.user.name if booking.user else "User removed",
                 "date": booking.date,
                 "time": booking.time,
+                "place": booking.doctor.place if booking.doctor else None,
+                "hospital_name": booking.doctor.hospital_name if booking.doctor else None,
                 # "booked_at": getattr(booking, 'created_at', None),
             })
         return Response(data, status=status.HTTP_200_OK)
