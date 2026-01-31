@@ -48,7 +48,7 @@ urlpatterns = [
     path("user/cancel-booking/<int:booking_id>/<int:user_id>/",UserCancelBookingAPI.as_view(),name="user_cancel_booking"),
     path("doctor/cancel-booking/<int:booking_id>/<int:doctor_id>/",DoctorCancelBookingAPI.as_view(),name="doctor_cancel_booking"),
     path("doctor/complete-booking/<int:booking_id>/<int:doctor_id>/",DoctorCompleteBookingAPI.as_view(),name="doctor_complete_booking"),
-
+    path("user/doctor-cancelled-bookings/<int:user_id>/",UserDoctorCancelledBookingsAPI.as_view(),name="user-doctor-cancelled-bookings"),
     # path("cycle-inputs/user/<int:user_id>/", get_cycle_inputs_by_user, name="cycle_inputs_by_user"),
     path('view_hospital_doctor/<int:doctor_id>/', views.view_hospital_doctor_profile, name='view_hospital_doctor_profile'),
     path('hospital_doctor/update/<int:pk>/', hospital_doctor_profile_update, name='hospital_doctor_profile_update'),

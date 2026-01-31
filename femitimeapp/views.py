@@ -926,6 +926,53 @@ class DoctorCancelBookingAPI(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from .models import HospitalBooking, Register
+
+
+class UserDoctorCancelledBookingsAPI(APIView):
+    def get(self, request, user_id):
+        try:
+            user = Register.objects.get(id=user_id)
+
+            bookings = HospitalBooking.objects.filter(
+                user=user,
+                status="cancelled_by_doctor"
+            ).select_related("doctor", "timeslot_group")
+
+            if not bookings.exists():
+                return Response({
+                    "status": "success",
+                    "message": "No doctor-cancelled bookings found",
+                    "data": []
+                }, status=status.HTTP_200_OK)
+
+            data = []
+            for booking in bookings:
+                data.append({
+                    "booking_id": booking.id,
+                    "doctor_name": booking.doctor.name if booking.doctor else None,
+                    "date": booking.date,
+                    "time": booking.time,
+                    "status": booking.status,
+                    "is_booked": booking.is_booked
+                })
+
+            return Response({
+                "status": "success",
+                "user_id": user.id,
+                "user_name": user.name,
+                "doctor_cancelled_bookings": data
+            }, status=status.HTTP_200_OK)
+
+        except Register.DoesNotExist:
+            return Response(
+                {"error": "User not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
