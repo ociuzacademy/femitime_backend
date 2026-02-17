@@ -723,26 +723,125 @@ def book_hospital_doctor_slot(request):
 
 
 
-# 🧠 User Adds Feedback
 @api_view(['POST'])
 def add_hospital_doctor_feedback(request):
     user_id = request.data.get('user')
     doctor_id = request.data.get('doctor')
+    booking_id = request.data.get('booking')  # ✅ NEW
     rating = request.data.get('rating')
     comments = request.data.get('comments', '')
 
     try:
         user = Register.objects.get(id=user_id)
         doctor = tbl_hospital_doctor_register.objects.get(id=doctor_id)
-    except (Register.DoesNotExist, tbl_hospital_doctor_register.DoesNotExist):
-        return Response({'error': 'Invalid user or doctor ID'}, status=status.HTTP_404_NOT_FOUND)
+        booking = HospitalBooking.objects.get(id=booking_id)
+
+        # ✅ Validate booking belongs to this user & doctor
+        if booking.user.id != user.id or booking.doctor.id != doctor.id:
+            return Response(
+                {"error": "Booking does not match user or doctor"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    except (Register.DoesNotExist,
+            tbl_hospital_doctor_register.DoesNotExist,
+            HospitalBooking.DoesNotExist):
+        return Response(
+            {'error': 'Invalid user, doctor, or booking ID'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    # Optional: Prevent duplicate feedback for same booking
+    if HospitalDoctorFeedback.objects.filter(booking=booking).exists():
+        return Response(
+            {"error": "Feedback already given for this booking."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     feedback = HospitalDoctorFeedback.objects.create(
-        user=user, doctor=doctor, rating=rating, comments=comments
+        user=user,
+        doctor=doctor,
+        booking=booking,  # ✅ SAVE BOOKING
+        rating=rating,
+        comments=comments
     )
+
     serializer = HospitalDoctorFeedbackSerializer(feedback)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+
+
+@api_view(['GET'])
+def view_feedback_by_booking(request, booking_id):
+    try:
+        booking = HospitalBooking.objects.get(id=booking_id)
+
+        feedback = HospitalDoctorFeedback.objects.filter(booking=booking)
+
+        if not feedback.exists():
+            return Response(
+                {"message": "No feedback found for this booking."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = HospitalDoctorFeedbackSerializer(feedback, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except HospitalBooking.DoesNotExist:
+        return Response(
+            {"error": "Invalid booking ID"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+
+
+# @api_view(['GET'])
+# def view_feedback_by_booking(request, booking_id):
+#     user_id = request.query_params.get('user')  # optional
+#     doctor_id = request.query_params.get('doctor')  # optional
+
+#     try:
+#         booking = HospitalBooking.objects.get(id=booking_id)
+
+#         # If user checking
+#         if user_id and booking.user.id != int(user_id):
+#             return Response({"error": "Not authorized"}, status=403)
+
+#         # If doctor checking
+#         if doctor_id and booking.doctor.id != int(doctor_id):
+#             return Response({"error": "Not authorized"}, status=403)
+
+#         feedback = HospitalDoctorFeedback.objects.filter(booking=booking)
+
+#         serializer = HospitalDoctorFeedbackSerializer(feedback, many=True)
+#         return Response(serializer.data, status=200)
+
+#     except HospitalBooking.DoesNotExist:
+#         return Response({"error": "Invalid booking ID"}, status=404)
+ 
+
+# @api_view(['GET'])
+# def view_feedback_by_booking(request, booking_id):
+#     try:
+#         booking = HospitalBooking.objects.get(id=booking_id)
+
+#         feedback = HospitalDoctorFeedback.objects.filter(booking_id=booking_id)
+
+#         if not feedback.exists():
+#             return Response(
+#                 {"message": "No feedback found for this booking."},
+#                 status=404
+#             )
+
+#         serializer = HospitalDoctorFeedbackSerializer(feedback, many=True)
+#         return Response(serializer.data, status=200)
+
+#     except HospitalBooking.DoesNotExist:
+#         return Response(
+#             {"error": "Invalid booking ID"},
+#             status=404
+#         )
 
 # 🧠 Doctor Views Feedback
 @api_view(['GET'])
@@ -800,8 +899,10 @@ class user_view_booking_hospital(APIView):
                 "patient_name": booking.user.name if booking.user else "User removed",
                 "date": booking.date,
                 "time": booking.time,
-                "place": booking.doctor.place if booking.doctor else None,
-                "hospital_name": booking.doctor.hospital_name if booking.doctor else None,
+                "place":booking.doctor.place if booking.doctor else None,
+                "hospital_name":booking.doctor.hospital_name if booking.doctor else None,
+                "doctor_id":booking.doctor_id,
+                "status":booking.status
                 # "booked_at": getattr(booking, 'created_at', None),
             })
         return Response(data, status=status.HTTP_200_OK)
@@ -814,15 +915,21 @@ class doctor_view_booking_hospital(APIView):
         for booking in bookings:
             data.append({
                 "id": booking.id,
-                "user": booking.user.id,
-                "user_name": booking.user.name,
+                "doctor": booking.doctor.id if booking.doctor else None,
+                "doctor_name": booking.doctor.name if booking.doctor else "Doctor removed",
+                "patient": booking.user.id,
+                "patient_name": booking.user.name if booking.user else "User removed",
                 "date": booking.date,
                 "time": booking.time,
-                "status": booking.status,
-                # "booked_at": booking.created_at,
+                "place":booking.doctor.place if booking.doctor else None,
+                "hospital_name":booking.doctor.hospital_name if booking.doctor else None,
+                "doctor_id":booking.doctor_id,
+                "status":booking.status
+                # "booked_at": getattr(booking, 'created_at', None),
             })
         return Response(data, status=status.HTTP_200_OK)
     
+
 
 
 

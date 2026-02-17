@@ -32,9 +32,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         
 from rest_framework import serializers
 
+from rest_framework import serializers
+# from .models import tbl_register
+from rest_framework import serializers
+
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+    role = serializers.CharField()
+
 
 from rest_framework import serializers
 from .models import tbl_hospital_doctor_register
@@ -99,16 +105,23 @@ class HospitalDoctorTimeSlotGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'doctor', 'doctor_name', 'date', 'start_time', 'end_time', 'timeslots']
 
 
-
-
 class HospitalDoctorFeedbackSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.name', read_only=True)
     doctor_name = serializers.CharField(source='doctor.name', read_only=True)
 
     class Meta:
         model = HospitalDoctorFeedback
-        fields = ['id', 'user', 'user_name', 'doctor', 'doctor_name', 'rating', 'comments', 'created_at']
-        
+        fields = [
+            'id',
+            'user',
+            'user_name',
+            'doctor',
+            'doctor_name',
+            'booking',   # ✅ ADD THIS
+            'rating',
+            'comments',
+            'created_at'
+        ]
 
 
 from .models import CycleInput

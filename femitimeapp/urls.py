@@ -64,4 +64,9 @@ urlpatterns = [
     path('hospital/doctor/<int:doctor_id>/bookings/', views.doctor_view_booking_hospital.as_view(), name='doctor_view_booking_hospital'),
     path('cycle-inputs/<int:user_id>/', GetCycleInputsByUser.as_view(), name='user_cycle_inputs'),
     path('prediction-results/<int:user_id>/', ViewPredictionResultsByUser.as_view(), name='view_prediction_results_by_user'),
+    path(
+    'booking/<int:booking_id>/feedback/',
+    views.view_feedback_by_booking,
+    name='view_feedback_by_booking'
+   ),
 ]
