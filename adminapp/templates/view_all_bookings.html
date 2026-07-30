@@ -44,6 +44,10 @@
                             <span class="badge bg-primary">Booked</span>
                         {% elif booking.status == 'cancelled' %}
                             <span class="badge bg-danger">Cancelled</span>
+                        {% elif booking.status == 'cancelled_by_doctor' %}
+                            <span class="badge bg-danger">Cancelled by Doctor</span>
+                        {% elif booking.status == 'cancelled_by_user' %}
+                            <span class="badge bg-warning text-dark">Cancelled by User</span>
                         {% elif booking.status == 'completed' %}
                             <span class="badge bg-success">Completed</span>
                         {% else %}
